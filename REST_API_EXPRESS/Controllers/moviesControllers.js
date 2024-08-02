@@ -9,7 +9,47 @@ app.use(express.json())
 
 exports.getAllMovies =async (req,res)=>{
     try{
-        const movies =await Movie.find();
+        // console.log(req.query);
+        //Filtering by URL
+        // const movies =await Movie.find(req.query);
+        // const movies =await Movie.find({"duration":req.query.duration,"ratings":req.query.ratings});
+        // const movies =await Movie.find()
+        //                 .where('duration')
+        //                 .equals(req.query.duration)
+        //                 .where('ratings')
+        //                 .equals(req.query.ratings)
+
+        //PERMANENT SOLUTION FOR Filtering 
+
+        // const excludeFields = ['sort','page','limit','fields']
+        // console.log(req.query)
+        // const queryObj=req.query
+        // console.log(queryObj)
+
+        // excludeFields.forEach((el)=>{
+        //    delete queryObj[el]
+        // })
+
+        // console.log(queryObj);
+        // const movies =await Movie.find(req.query);
+        
+        let querystr = JSON.stringify(req.query);
+        console.log(querystr);
+        
+        //REG EXP for replacing gte / lte / gt / lt to $gte / $lte / $gt / $lt
+        querystr=querystr.replace(/\b(gte|gt|lte|lt)\b/g,(match)=>`$${match}`)
+
+        const queryObj= JSON.parse(querystr)
+        console.log(queryObj)
+        const movies =await Movie.find(req.query);
+
+        // {duration:{$gte : 118}, gte}
+        //conditions -  gte / lte / gt / lt
+        //find({name="shaan",age:{$gte:18})
+
+
+
+
         res.status(200).json({
             status:"success",
             data:{
