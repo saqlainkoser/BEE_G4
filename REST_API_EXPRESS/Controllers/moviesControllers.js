@@ -7,6 +7,15 @@ const Movie=require("./../Models/movieModel.js")
 
 app.use(express.json())
 
+exports.getHighestRated = (req,res,next)=>{
+
+    req.query.limit = '5';
+    req.query.sort = '-ratings'
+    next()
+
+}
+
+
 exports.getAllMovies =async (req,res)=>{
     try{
         // console.log(req.query);
@@ -53,9 +62,10 @@ exports.getAllMovies =async (req,res)=>{
 
         if(req.query.sort){
             query = query.sort(req.query.sort)
-        }else{
-            // query = query.sort("-createdAt")
         }
+        // else{
+        //     query = query.sort("-createdAt")
+        // }
 
         //LIMITING FIELDS
         if(req.query.fields){
@@ -64,16 +74,18 @@ exports.getAllMovies =async (req,res)=>{
         }
         
         //Pagination and Limits 
-        let page= req.query.page * 1  || 1;
-        let limits=req.query.limit * 1 || 10;
-        
-        // 123456789101112
-        //p1 -s0 , p2 - s3 , p3 - s6
-        //l3
-        const skip = (page - 1) * limits
-        console.log(skip)
-        
-        query = query.skip(skip).limit(limits)
+        const page = req.query.page*1 || 1;
+        const limit = req.query.limit*1 || 10;
+
+        const skip = (page -1) * limit;
+        query = query.skip(skip).limit(limit);
+
+        if(req.query.page){
+            const moviesCount = await Movie.countDocuments()
+            if(skip>=moviesCount){
+                throw new Error("This page is not found")
+            }
+        }
 
         const movies =await query;
 
