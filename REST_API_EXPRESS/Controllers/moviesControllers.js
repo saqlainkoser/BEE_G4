@@ -20,7 +20,7 @@ exports.getHighestRated = (req,res,next)=>{
 exports.getAllMovies =async (req,res)=>{
     try{
         const features = new ApiFeatures(Movie.find(),req.query)
-        .sort().limitFields().paginate()
+        .filter().sort().limitFields().paginate()
 
         let movies =await features.query;
 
