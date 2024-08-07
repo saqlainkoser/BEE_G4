@@ -4,6 +4,7 @@ const app=express();
 // let movies=JSON.parse(fs.readFileSync('./data/movies.json'))
 const Movie=require("./../Models/movieModel.js")
 
+const ApiFeatures = require("./../Utils/ApiFeatures.js")
 
 app.use(express.json())
 
@@ -18,6 +19,12 @@ exports.getHighestRated = (req,res,next)=>{
 
 exports.getAllMovies =async (req,res)=>{
     try{
+        const features = new ApiFeatures(Movie.find(),req.query)
+        .sort().limitFields().paginate()
+
+        let movies =await features.query;
+
+
         // console.log(req.query);
         //Filtering by URL
         // const movies =await Movie.find(req.query);
@@ -42,13 +49,13 @@ exports.getAllMovies =async (req,res)=>{
         // console.log(queryObj);
         // const movies =await Movie.find(req.query);
         
-        let querystr = JSON.stringify(req.query);
-        console.log(querystr);
+        // let querystr = JSON.stringify(req.query);
+        // console.log(querystr);
         
-        //REG EXP for replacing gte / lte / gt / lt to $gte / $lte / $gt / $lt
-        querystr=querystr.replace(/\b(gte|gt|lte|lt)\b/g,(match)=>`$${match}`)
+        // //REG EXP for replacing gte / lte / gt / lt to $gte / $lte / $gt / $lt
+        // querystr=querystr.replace(/\b(gte|gt|lte|lt)\b/g,(match)=>`$${match}`)
 
-        const queryObj= JSON.parse(querystr)
+        // const queryObj= JSON.parse(querystr)
         // console.log(queryObj)
         // const movies =await Movie.find(req.query);
 
@@ -57,37 +64,37 @@ exports.getAllMovies =async (req,res)=>{
         //find({name="shaan",age:{$gte:18})
 
         //sorting data 
-        let query = Movie.find()
-        // console.log(req.query.sort);
+        // let query = Movie.find()
+        // // console.log(req.query.sort);
 
-        if(req.query.sort){
-            query = query.sort(req.query.sort)
-        }
-        // else{
-        //     query = query.sort("-createdAt")
+        // if(req.query.sort){
+        //     query = query.sort(req.query.sort)
         // }
+        // // else{
+        // //     query = query.sort("-createdAt")
+        // // }
 
         //LIMITING FIELDS
-        if(req.query.fields){
-            let fields = req.query.fields.split(',').join(" ")
-            query = query.select(fields)
-        }
+        // if(req.query.fields){
+        //     let fields = req.query.fields.split(',').join(" ")
+        //     query = query.select(fields)
+        // }
         
         //Pagination and Limits 
-        const page = req.query.page*1 || 1;
-        const limit = req.query.limit*1 || 10;
+        // const page = req.query.page*1 || 1;
+        // const limit = req.query.limit*1 || 10;
 
-        const skip = (page -1) * limit;
-        query = query.skip(skip).limit(limit);
+        // const skip = (page -1) * limit;
+        // query = query.skip(skip).limit(limit);
 
-        if(req.query.page){
-            const moviesCount = await Movie.countDocuments()
-            if(skip>=moviesCount){
-                throw new Error("This page is not found")
-            }
-        }
+        // if(req.query.page){
+        //     const moviesCount = await Movie.countDocuments()
+        //     if(skip>=moviesCount){
+        //         throw new Error("This page is not found")
+        //     }
+        // }
 
-        const movies =await query;
+        // const movies =await query;
 
         res.status(200).json({
             status:"success",
