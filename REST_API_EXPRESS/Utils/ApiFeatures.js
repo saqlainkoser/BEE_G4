@@ -10,9 +10,7 @@ class ApiFeatures{
     //Filter Code
     filter() {
         const excludeFields = ['sort', 'page', 'limit', 'fields'];
-        console.log(this.queryStr)
-        console.log(...this.queryStr);
-        
+      
         const queryObj = { ...this.queryStr };
 
         excludeFields.forEach(el => delete queryObj[el]);
@@ -32,6 +30,7 @@ class ApiFeatures{
         return this
     }
 
+    //Limiting Fields
     limitFields(){
         if(this.queryStr.fields){
             let fields = this.queryStr.fields.split(',').join(" ")
@@ -40,6 +39,7 @@ class ApiFeatures{
         return this
     }
 
+    //Paginate
     paginate(){
         const page = this.queryStr.page*1 || 1;
         const limit = this.queryStr.limit*1 || 10;
