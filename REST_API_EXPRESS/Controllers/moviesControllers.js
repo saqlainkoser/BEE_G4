@@ -189,3 +189,90 @@ exports.deleteMovie =async (req,res)=>{
         })
     }
 }
+
+
+
+//Aggregation function for movie Stat --- 
+
+exports.getMoviesStats = async(req,res) =>{
+    try{
+        //Aggregation function use to take summary like min ,max, avg ,sum etc.
+        const  stats = await Movie.aggregate([
+            //STAGE 1 to filter data
+            {$match :{ratings:{$gte : 7}}},
+
+            //STAGE 2 Grouping data 
+            {$group :{
+                _id:'$releaseYear',
+                avgRating :{$avg : '$ratings'},
+                avgPrice :{$avg : '$price'},
+                minPrice :{$min : '$price'},
+                maxPrice :{$max : '$price'},
+                priceTotal:{$sum :'$price'},
+                movieCount:{$sum : 1}
+            }},
+
+            //STAGE 3 to sort data ....
+            {$sort: {minPrice : 1}}
+
+        ])
+
+        res.status(200).json({
+            status:"success",
+            length: stats.length,
+            data:{
+                stats
+            }
+        });
+
+
+    }catch(err){
+        res.status(404).json({
+            status:"fail",
+            message:err.message
+        })  
+    }
+}
+
+
+//Function to take movies by genre
+
+exports.getMoviesByGenre =async (req,res)=>{
+    try{
+        const genre = req.params.genre;
+        // console.log(genre)
+        const movies = await Movie.aggregate([
+            //Stage 1
+            {$unwind : '$genres'},
+            //Stage 2
+            {$group :{
+                _id:"$genres",
+                movieCount:{$sum : 1},
+                movies:{$push: "$name"}
+            }},
+            //Stage 3
+            {$addFields :{genre :"$_id"} },
+            //Stage 4
+            {$project : {_id:0}},
+            //Stage 5
+            {$sort : {movieCount: -1}},
+            //Stage 6
+            {$match:{genre:genre}}
+            
+        ])
+
+        res.status(200).json({
+            status: "success",
+            length:movies.length,
+            data:{
+                movies:movies
+            }
+        })
+
+    }catch(err){
+        res.status(404).json({
+            status:"fail",
+            message:err.message
+        })  
+    }
+}

@@ -11,6 +11,11 @@ const moviesControllers = require('./../Controllers/moviesControllers.js')
 moviesRouter.route('/higest-rated')
 .get(moviesControllers.getHighestRated,moviesControllers.getAllMovies)
 
+//Router for Stats
+moviesRouter.route("/movies-stats").get(moviesControllers.getMoviesStats);
+
+//Route for movie by genre
+moviesRouter.route("/movies-by-genre/:genre").get(moviesControllers.getMoviesByGenre);
 
 moviesRouter.route('/')
 .get(moviesControllers.getAllMovies)
