@@ -1,0 +1,1 @@
+A new movie with name new_movie is created by Shaan

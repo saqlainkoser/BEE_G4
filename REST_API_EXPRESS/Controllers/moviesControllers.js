@@ -9,11 +9,9 @@ const ApiFeatures = require("./../Utils/ApiFeatures.js")
 app.use(express.json())
 
 exports.getHighestRated = (req,res,next)=>{
-
     req.query.limit = '5';
     req.query.sort = '-ratings'
     next()
-
 }
 
 
@@ -24,6 +22,7 @@ exports.getAllMovies =async (req,res)=>{
 
         let movies =await features.query;
 
+        
 
         // console.log(req.query);
         //Filtering by URL
@@ -193,7 +192,6 @@ exports.deleteMovie =async (req,res)=>{
 
 
 //Aggregation function for movie Stat --- 
-
 exports.getMoviesStats = async(req,res) =>{
     try{
         //Aggregation function use to take summary like min ,max, avg ,sum etc.
