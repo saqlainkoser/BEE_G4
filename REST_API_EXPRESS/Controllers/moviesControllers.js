@@ -13,8 +13,8 @@ exports.getHighestRated = (req,res,next)=>{
     req.query.sort = '-ratings'
     next()
 }
-
-
+//let query = Movie.find()
+//let movies=await query;
 exports.getAllMovies =async (req,res)=>{
     try{
         const features = new ApiFeatures(Movie.find(),req.query)
@@ -113,7 +113,7 @@ exports.getAllMovies =async (req,res)=>{
 
 exports.createMovie = async(req,res)=>{
     try{
-        const newMovie=await Movie.create(req.body);
+        const newMovie=await Movie.create(req.body,{runValidators:true});
         res.status(201).json({
             status:"success",
             data:{
@@ -196,8 +196,9 @@ exports.getMoviesStats = async(req,res) =>{
     try{
         //Aggregation function use to take summary like min ,max, avg ,sum etc.
         const  stats = await Movie.aggregate([
+            // {$match :{releaseDate:{$lte : new Date()}}},
             //STAGE 1 to filter data
-            {$match :{ratings:{$gte : 7}}},
+            {$match :{ratings:{$gte : 4}}},
 
             //STAGE 2 Grouping data 
             {$group :{

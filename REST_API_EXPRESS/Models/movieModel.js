@@ -2,6 +2,8 @@ const mongoose=require('mongoose');
 const fs = require('fs');
 
 
+
+
 //TO make schema
 const movieSchema=new mongoose.Schema({
     //fields declaration
@@ -9,6 +11,8 @@ const movieSchema=new mongoose.Schema({
         type:String,
         required:[true,"Name is Required field!"],
         unique:true,
+        minlength:[4],
+        maxlength:[100],
         trim:true
     },
     description:{
@@ -80,14 +84,40 @@ movieSchema.pre("save",function(next){
 //TO log any update
 
 movieSchema.post("save",function(doc,next){
-    const content = `A new movie with name ${doc.name} is created by ${doc.createdBy}`
+    const content = `A new movie with name ${doc.name} is created by ${doc.createdBy}/n`
     fs.writeFileSync("./Log/log.txt",content,{flag :'a'},(err)=>{
         console.log(err.message);
     })
     next();
 })
 
+//Query middleware to get correct data
+movieSchema.pre(/^find/,function(next){
+    this.find({releaseDate : {$lte:Date.now()}})
+    // console.log(Date.now());
+    this.starttime = Date.now()
+    next();
+})
 
+//Query middleware post for fetch time calculation
+movieSchema.post(/^find/,function(doc,next){
+    this.find({releaseDate:{$lte:Date.now()}})
+    this.endtime = Date.now()
+    const content = `Query took ${this.endtime - this.starttime} millisecond to fetch the documents.\n`
+    fs.writeFileSync("./Log/log.txt",content,{flag :'a'},(err)=>{
+        console.log(err.message);
+    })
+    next();
+} ) 
+
+
+//Aggregation middleware pre for correct data 
+
+movieSchema.pre("aggregate",function(next){
+    console.log(this.pipeline().unshift({$match :{releaseDate:{$lte : new Date()}}}))
+    // {$match :{releaseDate:{$lte : new Date()}}},
+    next();
+})
 
 
 //To make model

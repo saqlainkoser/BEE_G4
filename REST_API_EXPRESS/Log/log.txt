@@ -1,1 +1,19 @@
 A new movie with name new_movie is created by Shaan
+Query took 50 millisecond to fetch the documents.
+Query took 44 millisecond to fetch the documents.
+Query took 43 millisecond to fetch the documents.
+Query took 60 millisecond to fetch the documents.
+Query took 40 millisecond to fetch the documents.
+Query took 75 millisecond to fetch the documents.
+Query took 50 millisecond to fetch the documents.
+Query took 50 millisecond to fetch the documents.
+Query took 47 millisecond to fetch the documents.
+Query took 51 millisecond to fetch the documents.
+Query took 43 millisecond to fetch the documents.
+Query took 38 millisecond to fetch the documents.
+Query took 67 millisecond to fetch the documents.
+Query took 36 millisecond to fetch the documents.
+Query took 51 millisecond to fetch the documents.
+Query took 58 millisecond to fetch the documents.
+Query took 52 millisecond to fetch the documents.
+Query took 42 millisecond to fetch the documents.
